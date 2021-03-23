@@ -1,0 +1,13 @@
+defaults: &defaults
+  cluster_name: FooBar
+  profile: saml
+  access_key_id: client_key
+  secret_access_key: secret_key
+  region: ap-southeast-2
+  task_definition: task
+  security_groups:
+    - internal-security-group
+    - console-public-security-group
+
+production:
+  <<: *defaults

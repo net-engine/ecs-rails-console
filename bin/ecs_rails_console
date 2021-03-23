@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'optparse'
+require 'ecs_rails_console'
+
+$LOAD_PATH.push File.expand_path('../lib', __dir__)
+
+options = {
+  environment: 'production'
+}
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: ecs_rails_console [options]'
+
+  opts.on('-g', '--generate-config', 'Generate config file') do
+    template    = File.expand_path('../lib/ecs_rails_console/templates/ecs_rails_console.yml',
+                                   __dir__)
+    config_file = 'config/ecs_rails_console.yml'
+
+    FileUtils.mkdir_p(File.dirname(config_file))
+    FileUtils.cp(template, "#{Dir.pwd}/#{config_file}")
+    puts "File generated: #{config_file}"
+    exit
+  end
+
+  opts.on('-h', '--help', 'Display this help') do
+    puts opts
+    puts
+    puts 'You can read the official documentation here:'
+    puts
+    exit
+  end
+
+  opts.on('-eENVIRONMENT', '--environment=ENVIRONMENT', 'Rails environment') do |e|
+    options[:environment] = e
+  end
+
+  opts.on('-v', '--version', 'Display version') do
+    require 'ecs_rails_console/version'
+    puts EcsRailsConsole::VERSION
+    exit
+  end
+end.parse!
+
+begin
+  EcsRailsConsole::Cli.run!(options)
+rescue Gem::LoadError
+  puts 'ecs_rails_console is not in your Gemfile.'
+  exit 1
+end
