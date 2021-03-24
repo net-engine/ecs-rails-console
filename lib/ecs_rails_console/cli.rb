@@ -10,7 +10,7 @@ module EcsRailsConsole
     end
 
     def initialize(options)
-      super
+      super()
       @environment = options[:environment]
     end
 
