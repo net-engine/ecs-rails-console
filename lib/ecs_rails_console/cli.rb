@@ -4,6 +4,8 @@ require 'bundler/setup'
 require 'yaml'
 
 module EcsRailsConsole
+  CONFIG_FILE = "#{Dir.pwd}/config/ecs_rails_console.yml"
+
   class Cli < Core
     def self.run!(options)
       new(options).run!
@@ -42,11 +44,7 @@ module EcsRailsConsole
     end
 
     def config
-      @config ||= YAML.load_file(config_file_from_project)[environment] || {}
-    end
-
-    def config_file_from_project
-      "#{Dir.pwd}/config/ecs_rails_console.yml"
+      @config ||= YAML.load_file(CONFIG_FILE)[environment] || {}
     end
   end
 end
