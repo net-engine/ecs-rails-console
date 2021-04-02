@@ -8,6 +8,7 @@ defaults: &defaults
   security_groups:
     - internal-security-group
     - console-public-security-group
+  ssh_user: root
 
 production:
   <<: *defaults
