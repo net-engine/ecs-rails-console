@@ -24,6 +24,8 @@ module EcsRailsConsole
       puts "it is running on: #{public_ip}"
 
       system("ssh -tq -oStrictHostKeyChecking=no root@#{public_ip} 'cd /app ; bin/rails console'")
+    rescue Aws::ECS::Errors::ExpiredTokenException
+      puts "\nHey, it seems your token expired. Authenticate on AWS give another try."
     end
 
     private
