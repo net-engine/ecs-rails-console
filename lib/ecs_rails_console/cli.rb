@@ -50,7 +50,7 @@ module EcsRailsConsole
     end
 
     def ssh_user
-      config[:ssh_user].presence || 'root'
+      config[:ssh_user] || 'root'
     end
   end
 end
