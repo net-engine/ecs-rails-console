@@ -11,38 +11,47 @@ options = {
   command: 'bin/rails console'
 }
 
-OptionParser.new do |opts|
-  opts.banner = 'Usage: ecs_rails_console [options]'
+opts = OptionParser.new do |o|
+  o.banner = 'Usage: ecs_rails_console [options]'
 
-  opts.on('-g', '--generate-config', 'Generate config file') do
-    template    = File.expand_path('../lib/ecs_rails_console/templates/ecs_rails_console.yml',
-                                   __dir__)
+  o.on('-g', '--generate-config', 'Generate config file') do
+    template = File.expand_path('../config/ecs_rails_console.yml', __dir__)
     config_file = 'config/ecs_rails_console.yml'
 
-    FileUtils.mkdir_p(File.dirname(config_file))
-    FileUtils.cp(template, "#{Dir.pwd}/#{config_file}")
-    puts "File generated: #{config_file}"
+    if File.exist?(config_file)
+      puts 'Configuration file already exists and will be kept untouched.'
+    else
+      FileUtils.mkdir_p(File.dirname(config_file))
+      FileUtils.cp(template, "#{Dir.pwd}/#{config_file}")
+      puts "File generated: #{config_file}"
+    end
     exit
   end
 
-  opts.on('-h', '--help', 'Display this help') do
-    puts opts
-    puts
-    puts 'You can read the official documentation here:'
-    puts
+  o.on('-h', '--help', 'Display this help') do
+    puts o
     exit
   end
 
-  opts.on('-eENVIRONMENT', '--environment=ENVIRONMENT', 'Rails environment') do |e|
+  o.on('-eENVIRONMENT', '--environment=ENVIRONMENT', 'Rails environment') do |e|
     options[:environment] = e
   end
 
-  opts.on('-v', '--version', 'Display version') do
+  o.on('-v', '--version', 'Display version') do
     require 'ecs_rails_console/version'
     puts EcsRailsConsole::VERSION
     exit
   end
-end.parse!
+end
+
+begin
+  opts.parse!
+rescue OptionParser::InvalidOption => e
+  puts e
+  puts
+  puts opts
+  exit
+end
 
 options[:command] = ARGV.join(' ') unless ARGV.empty?
 
