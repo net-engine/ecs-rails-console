@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'bundler/setup'
-require 'yaml'
+require "bundler/setup"
+require "yaml"
 
 module EcsRailsConsole
   class Cli < Core
@@ -32,10 +32,10 @@ module EcsRailsConsole
 
     def aws_credentials
       config.slice(
-        'profile',
-        'access_key_id',
-        'secret_access_key',
-        'region'
+        "profile",
+        "access_key_id",
+        "secret_access_key",
+        "region"
       ).transform_keys(&:to_sym)
     end
 

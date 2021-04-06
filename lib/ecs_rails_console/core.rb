@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-ecs'
-require 'aws-sdk-ec2'
+require "aws-sdk-ecs"
+require "aws-sdk-ec2"
 
 module EcsRailsConsole
   class Core
@@ -20,12 +20,12 @@ module EcsRailsConsole
         id = ec2_client.describe_vpcs(
           {
             filters: [{
-              name: 'tag:aws:cloudformation:stack-name',
+              name: "tag:aws:cloudformation:stack-name",
               values: ["#{cluster_name}InfraStack"]
             }]
           }
         )[:vpcs].map(&:vpc_id).first
-        abort 'Could not find VPC' if id.empty?
+        abort "Could not find VPC" if id.empty?
 
         id
       end
@@ -36,12 +36,12 @@ module EcsRailsConsole
         ids = ec2_client.describe_subnets(
           {
             filters: [
-              { name: 'vpc-id', values: [vpc_id] },
-              { name: 'tag:aws-cdk:subnet-type', values: ['Public'] }
+              {name: "vpc-id", values: [vpc_id]},
+              {name: "tag:aws-cdk:subnet-type", values: ["Public"]}
             ]
           }
         )[:subnets].map(&:subnet_id)
-        abort 'Could not find subnets' if ids.empty?
+        abort "Could not find subnets" if ids.empty?
 
         ids
       end
@@ -51,12 +51,12 @@ module EcsRailsConsole
       @console_security_group_ids ||= begin
         ids = ec2_client.describe_security_groups(
           filters: [
-            { name: 'vpc-id', values: [vpc_id] },
-            { name: 'group-name',
-              values: config['security_groups'] }
+            {name: "vpc-id", values: [vpc_id]},
+            {name: "group-name",
+             values: config["security_groups"]}
           ]
         )[:security_groups].map(&:group_id)
-        abort 'Could not find security groups' if ids.empty?
+        abort "Could not find security groups" if ids.empty?
 
         ids
       end
@@ -65,11 +65,11 @@ module EcsRailsConsole
     def task_definition
       @task_definition ||= begin
         task_definition_name_regex = %r{.*/(#{config['task_definition']}):\d+}
-        task_definitions = ecs_client.list_task_definitions(status: 'ACTIVE')
+        task_definitions = ecs_client.list_task_definitions(status: "ACTIVE")
         definition_arn = task_definitions[:task_definition_arns].detect do |arn|
           arn.match(task_definition_name_regex)
         end
-        abort 'Could not find console task definition' if definition_arn.empty?
+        abort "Could not find console task definition" if definition_arn.empty?
 
         definition_arn.match(task_definition_name_regex).captures.first
       end
@@ -79,13 +79,13 @@ module EcsRailsConsole
       task = ecs_client.run_task(
         {
           cluster: cluster_name,
-          launch_type: 'FARGATE',
+          launch_type: "FARGATE",
           task_definition: task_definition,
           network_configuration: {
             awsvpc_configuration: {
               subnets: subnet_ids(vpc_id),
               security_groups: console_security_group_ids(vpc_id),
-              assign_public_ip: 'ENABLED'
+              assign_public_ip: "ENABLED"
             }
           }
         }
@@ -93,17 +93,16 @@ module EcsRailsConsole
 
       task_id = task[:task_arn].match(%r{.*/(\w+)$}).captures.first
 
-      ecs_client.wait_until(:tasks_running,
-                            {
-                              cluster: cluster_name,
-                              tasks: [task_id]
-                            })[:tasks].first
+      ecs_client
+        .wait_until(:tasks_running, {cluster: cluster_name, tasks: [task_id]})[:tasks]
+        .first
     end
 
     def get_public_ip(task_description)
-      network_interface_id = task_description[:attachments]
-                             .first[:details]
-                             .detect { |detail| detail[:name] == 'networkInterfaceId' }[:value]
+      network_interface_id =
+        task_description[:attachments]
+          .first[:details]
+          .detect { |detail| detail[:name] == "networkInterfaceId" }[:value]
 
       ec2_client.describe_network_interfaces(
         network_interface_ids: [
@@ -113,7 +112,7 @@ module EcsRailsConsole
     end
 
     def cluster_name
-      @cluster_name ||= config['cluster_name']
+      @cluster_name ||= config["cluster_name"]
     end
   end
 end
