@@ -14,8 +14,8 @@ module EcsRailsConsole
 
     def initialize(options)
       super()
-      @environment = options[:environment]
-      @command = options[:command]
+      @environment = options[:environment] || options.environment
+      @command = options[:command] || options.command
     end
 
     def run!

@@ -2,9 +2,10 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'ecs_rails_console'
 
 $LOAD_PATH.push File.expand_path('../lib', __dir__)
+require 'ecs_rails_console'
+
 
 options = {
   environment: 'production',

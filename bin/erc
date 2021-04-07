@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.push File.expand_path("../lib", __dir__)
+require "ecs_rails_console"
+
+command_options = EcsRailsConsole::CommandOptions.new.parse(ARGV)
+command_options.command = ARGV.join(" ") unless ARGV.empty?
+
+begin
+  EcsRailsConsole::Cli.run!(command_options)
+rescue Gem::LoadError
+  puts "ecs_rails_console is not in your Gemfile."
+  exit 1
+end

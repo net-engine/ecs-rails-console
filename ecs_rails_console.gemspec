@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir.glob('{lib,bin}/**/*')
   s.bindir = 'bin'
-  s.executables = ['ecs_rails_console']
+  s.executables = ['ecs_rails_console','erc']
   s.require_paths = ['lib']
 
   s.required_ruby_version = '>= 2.7'
