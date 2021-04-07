@@ -1,3 +1,13 @@
 *.gem
-
-.idea
+.DS_Store
+.bundle
+.project
+.rbenv-gemsets
+.rbenv-version
+.ruby-gemset
+.ruby-version
+.rvmrc
+.vagrant*
+.env
+.vscode/
+.idea/*
