@@ -1,3 +1,4 @@
+[![Ruby Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://github.com/testdouble/standard)
 # ecs-rails-console
 
 A simple tool to run `rails console` or other Rails CLI commands in AWS ECS Fargate.
