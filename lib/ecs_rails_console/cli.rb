@@ -4,6 +4,9 @@ require "bundler/setup"
 require "yaml"
 
 module EcsRailsConsole
+  CONFIG_FILE = "#{Dir.pwd}/config/ecs_rails_console.yml"
+  SSH_OPTIONS = '-tq -oStrictHostKeyChecking=no'
+
   class Cli < Core
     def self.run!(options)
       new(options).run!
@@ -12,6 +15,7 @@ module EcsRailsConsole
     def initialize(options)
       super()
       @environment = options[:environment]
+      @command = options[:command]
     end
 
     def run!
@@ -23,12 +27,14 @@ module EcsRailsConsole
 
       puts "it is running on: #{public_ip}"
 
-      system("ssh -tq -oStrictHostKeyChecking=no root@#{public_ip} 'cd /app ; bin/rails console'")
+      system("ssh #{SSH_OPTIONS} #{ssh_user}@#{public_ip} 'cd /app ; #{command}'")
+    rescue Aws::ECS::Errors::ExpiredTokenException
+      puts "\nHey, it seems your token expired. Authenticate on AWS give another try."
     end
 
     private
 
-    attr_reader :environment
+    attr_reader :environment, :command
 
     def aws_credentials
       config.slice(
@@ -40,11 +46,11 @@ module EcsRailsConsole
     end
 
     def config
-      @config ||= YAML.load_file(config_file_from_project)[environment] || {}
+      @config ||= YAML.load_file(CONFIG_FILE)[environment] || {}
     end
 
-    def config_file_from_project
-      "#{Dir.pwd}/config/ecs_rails_console.yml"
+    def ssh_user
+      config[:ssh_user] || 'root'
     end
   end
 end
