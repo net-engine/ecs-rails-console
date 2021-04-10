@@ -11,10 +11,10 @@ options = {
   command: 'bin/rails console'
 }
 
-opts = OptionParser.new do |o|
-  o.banner = 'Usage: ecs_rails_console [options]'
+opts = OptionParser.new do |option|
+  option.banner = 'Usage: ecs_rails_console [options]'
 
-  o.on('-g', '--generate-config', 'Generate config file') do
+  option.on('-g', '--generate-config', 'Generate config file') do
     template = File.expand_path('../config/ecs_rails_console.yml', __dir__)
     config_file = 'config/ecs_rails_console.yml'
 
@@ -28,16 +28,16 @@ opts = OptionParser.new do |o|
     exit
   end
 
-  o.on('-h', '--help', 'Display this help') do
-    puts o
+  option.on('-h', '--help', 'Display this help') do
+    puts option
     exit
   end
 
-  o.on('-eENVIRONMENT', '--environment=ENVIRONMENT', 'Rails environment') do |e|
-    options[:environment] = e
+  option.on('-eENVIRONMENT', '--environment=ENVIRONMENT', 'Rails environment') do |environment|
+    options[:environment] = environment
   end
 
-  o.on('-v', '--version', 'Display version') do
+  option.on('-v', '--version', 'Display version') do
     require 'ecs_rails_console/version'
     puts EcsRailsConsole::VERSION
     exit
