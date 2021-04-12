@@ -5,7 +5,7 @@ require "yaml"
 
 module EcsRailsConsole
   CONFIG_FILE = "#{Dir.pwd}/config/ecs_rails_console.yml"
-  SSH_OPTIONS = '-tq -oStrictHostKeyChecking=no'
+  SSH_OPTIONS = "-tq -oStrictHostKeyChecking=no"
 
   class Cli < Core
     def self.run!(options)
@@ -14,8 +14,8 @@ module EcsRailsConsole
 
     def initialize(options)
       super()
-      @environment = options[:environment]
-      @command = options[:command]
+      @environment = options[:environment] || options.environment
+      @command = options[:command] || options.command
     end
 
     def run!
@@ -50,7 +50,7 @@ module EcsRailsConsole
     end
 
     def ssh_user
-      config[:ssh_user] || 'root'
+      config[:ssh_user] || "root"
     end
   end
 end
